@@ -1,5 +1,8 @@
 package tweet;
 
+import account.Account;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +26,19 @@ public class Tweet {
         this.retweets = retweets;
         this.tweet_id = tweet_id;
         this.images = images;
+    }
+
+    public static List<Account> addTweet(Tweet tweetTemp, String userName, List<Account> accounts) {
+        for (int i = 0; i < accounts.size(); i++) {
+            if (accounts.get(i).getUserName().equals(userName)) {
+                if (accounts.get(i).getTweets() == null) {
+                    List<Tweet> tweets = new ArrayList<>();
+                    tweets.add(tweetTemp);
+                    accounts.get(i).setTweets(tweets);
+                } else accounts.get(i).getTweets().add(tweetTemp);
+            }
+        }
+        return accounts;
     }
 
     public String getText() {

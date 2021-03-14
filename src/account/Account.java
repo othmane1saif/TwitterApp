@@ -25,10 +25,11 @@ public class Account {
     public Account() {
     }
 
-    public Account(String userName, String password, List<Tweet> tweets) {
+    public Account(String userName, String password, List<Tweet> tweets,Profile profile) {
         this.userName = userName;
         this.password = password;
         this.tweets = tweets;
+        this.profile = profile;
     }
 
     public Account(String userName, String password, List<Notification> followers, List<Notification> following,
@@ -47,6 +48,7 @@ public class Account {
         this.moments = moments;
         this.threads = threads;
     }
+
 
     public String getUserName() {
         return userName;
@@ -144,7 +146,60 @@ public class Account {
         this.threads = threads;
     }
 
-    public boolean authenticate(String userName, String password, List<Account> accounts) {
-       return accounts.stream().anyMatch(ele -> ele.getPassword().equals(password) && ele.getUserName().equals(userName));
+    public static boolean authenticate(String userName, String password, List<Account> accounts) {
+        for(int i=0; i<accounts.size(); i++){
+            if(userName.equals(accounts.get(i).getUserName())){
+                if(password.equals(accounts.get(i).getPassword())){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    public static void showTimeLine(List<Account> accounts) {
+        for (int i = 0; i < accounts.size(); i++) {
+            Account account = accounts.get(i);
+            if (account.getTweets() != null) {
+                List<Tweet> tweets = account.getTweets();
+                for (int j = 0; j < tweets.size(); j++) {
+                    System.out.println(account.getUserName() + " :");
+                    System.out.println(tweets.get(j).getText());
+                }
+            }
+        }
+    }
+
+    public static List<Account> changePass(String userName, String newPassword, String repeatNewPassword, List<Account> accounts) {
+        if (newPassword.equals(repeatNewPassword)) {
+            int id = findByUserNameAndPassword(userName, accounts);
+            if (id != -1) {
+                accounts.get(id).setPassword(newPassword);
+                System.out.println("Your password was successfully changed ");
+            }
+        } else {
+            System.out.println("Repeated password not match with your new password");
+        }
+        return  accounts;
+    }
+
+    private static int findByUserNameAndPassword(String userName, List<Account> accounts) {
+        for (int i = 0; i < accounts.size(); i++) {
+            if (accounts.get(i).getUserName().equals(userName)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static Account createAccount(String username, String pwd, String email, String phone) {
+        Account account = new Account();
+        account.setUserName(username);
+        account.setPassword(pwd);
+        Profile profile = new Profile(email, phone);
+        account.setProfile(profile);
+
+        return account;
     }
 }
